@@ -25,7 +25,7 @@ func main() {
 	})
 
 	e.POST("/users", func(c echo.Context) error {
-		connectionString := "couchbase://" + os.Getenv("COUCHBASE_MASTER_HOST")
+		connectionString := "couchbase://" + os.Getenv("COUCHBASE_HOST")
 		bucketName := os.Getenv("COUCHBASE_BUCKET_NAME")
 		username := os.Getenv("COUCHBASE_USERNAME")
 		password := os.Getenv("COUCHBASE_PASSWORD")
