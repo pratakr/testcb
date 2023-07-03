@@ -16,6 +16,11 @@ type User struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Age       int    `json:"age"`
+	Sex       string `json:"sex"`
+	Address   string `json:"address"`
+	PhoneNo   string `json:"phoneno"`
+	Email     string `json:"email"`
+	Education string `json:"education"`
 }
 
 func main() {
