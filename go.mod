@@ -3,6 +3,7 @@ module dssc.com/m
 go 1.18
 
 require (
+	github.com/confluentinc/confluent-kafka-go v1.9.2 // indirect
 	github.com/couchbase/gocb/v2 v2.6.3 // indirect
 	github.com/couchbase/gocbcore/v10 v10.2.3 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
