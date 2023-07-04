@@ -57,7 +57,7 @@ func main() {
 	log.Println("Connected to Couchbase:"+connectionString, bucketName, username, password)
 
 	//Connect Kafka
-	kafkaConnectionString := os.Getenv("KAFKA_HOST")
+	kafkaConnectionString := os.Getenv("KAFKA_CONNECTION_STRING")
 	config := &kafka.ConfigMap{
 		"bootstrap.servers": kafkaConnectionString, // kafka broker addr
 	}
