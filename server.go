@@ -120,7 +120,7 @@ func main() {
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "producer "+err.Error())
 		}
-		producer.Flush(15 * 1000)
+		// producer.Flush(1000)
 		return c.JSON(http.StatusOK, struct{ ID string }{ID: id})
 	})
 
