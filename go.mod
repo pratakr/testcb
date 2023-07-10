@@ -1,4 +1,4 @@
-module dssc.com/m
+module bitbucket.com/sdssc/paygate
 
 go 1.18
 
