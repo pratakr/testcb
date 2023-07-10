@@ -41,9 +41,9 @@ type Payment struct {
 	Status         string `json:"status"`
 	IsSattle       string `json:"is_sattle"`
 	CreatedBy      string `json:"created_by"`
-	CreatedAt      string `json:"created_at"`
+	CreatedAt      int64  `json:"created_at"`
 	UpdatedBy      string `json:"updated_by"`
-	UpdatedAt      string `json:"updated_at"`
+	UpdatedAt      int64  `json:"updated_at"`
 }
 
 type Api struct {
@@ -127,6 +127,8 @@ func (api *Api) Start() {
 		c.Bind(&payment)
 		id := uuid.New().String()
 		payment.ID = id
+		//dat, _ := json.Marshal(payment)
+		// log.Println("payment_id:", string(dat))
 
 		bucket := cluster.Bucket(bucketName)
 		err = bucket.WaitUntilReady(5*time.Second, nil)
@@ -146,6 +148,7 @@ func (api *Api) Start() {
 
 		payment_id := fmt.Sprintf("%d", result.Content())
 		payment.ID = payment_id
+
 		_, err = collection.Upsert(id, payment, nil)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "insert "+err.Error())
