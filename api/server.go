@@ -38,7 +38,7 @@ type Payment struct {
 	Currency       string `json:"currency"`
 	RouteNo        string `json:"route_no"`
 	CardNo         string `json:"card_no"`
-	Status         string `json:"status"`
+	Status         int    `json:"status"`
 	IsSattle       string `json:"is_sattle"`
 	CreatedBy      string `json:"created_by"`
 	CreatedAt      int64  `json:"created_at"`
