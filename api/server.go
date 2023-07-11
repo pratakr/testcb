@@ -103,12 +103,6 @@ func (api *Api) Start() {
 
 	e.POST("/users", func(c echo.Context) error {
 
-		bucket := cluster.Bucket(bucketName)
-		err = bucket.WaitUntilReady(5*time.Second, nil)
-		if err != nil {
-			return c.String(http.StatusInternalServerError, "wait "+err.Error())
-		}
-
 		collection := bucket.Collection("users")
 		user := new(User)
 		c.Bind(&user)
