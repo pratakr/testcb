@@ -46,6 +46,12 @@ type Payment struct {
 	UpdatedAt      int64  `json:"updated_at"`
 }
 
+type RespData struct {
+	Total int       `json:"total"`
+	Page  int       `json:"page"`
+	Data  []Payment `json:"data"`
+}
+
 type Api struct {
 }
 
@@ -69,6 +75,11 @@ func (api *Api) Start() {
 	})
 	if err != nil {
 		log.Println("connect " + err.Error())
+	}
+	bucket := cluster.Bucket(bucketName)
+	err = bucket.WaitUntilReady(5*time.Second, nil)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "wait "+err.Error())
 	}
 	log.Println("Connected to Couchbase:"+connectionString, bucketName, username, password)
 
@@ -120,6 +131,26 @@ func (api *Api) Start() {
 		return c.JSON(http.StatusOK, user)
 	})
 
+	e.GET("/payments", func(c echo.Context) error {
+		var respData RespData
+
+		queryStr := fmt.Sprintf("SELECT * FROM `payments` limit 25")
+		rows, err := cluster.Query(queryStr, &gocb.QueryOptions{})
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "query "+err.Error())
+		}
+		respData.Data = []Payment{}
+		var payment Payment
+		for rows.Next() {
+			rows.Row(&payment)
+			respData.Data = append(respData.Data, payment)
+			payment = Payment{}
+		}
+
+		return c.JSON(http.StatusOK, respData)
+
+	})
+
 	//Couchbase
 	e.POST("/payments", func(c echo.Context) error {
 
@@ -130,11 +161,6 @@ func (api *Api) Start() {
 		//dat, _ := json.Marshal(payment)
 		// log.Println("payment_id:", string(dat))
 
-		bucket := cluster.Bucket(bucketName)
-		err = bucket.WaitUntilReady(5*time.Second, nil)
-		if err != nil {
-			return c.String(http.StatusInternalServerError, "wait "+err.Error())
-		}
 		collection := bucket.Collection("payments")
 		binaryC := collection.Binary()
 		key := "paymentCounter"
