@@ -74,12 +74,7 @@ func (api *Api) Start() {
 		},
 	})
 	if err != nil {
-		log.Println("connect " + err.Error())
-	}
-	bucket := cluster.Bucket(bucketName)
-	err = bucket.WaitUntilReady(5*time.Second, nil)
-	if err != nil {
-		log.Fatal(http.StatusInternalServerError, "wait "+err.Error())
+		log.Fatal("connect " + err.Error())
 	}
 	log.Println("Connected to Couchbase:"+connectionString, bucketName, username, password)
 
@@ -102,6 +97,11 @@ func (api *Api) Start() {
 	})
 
 	e.POST("/users", func(c echo.Context) error {
+		bucket := cluster.Bucket(bucketName)
+		err = bucket.WaitUntilReady(5*time.Second, nil)
+		if err != nil {
+			c.String(http.StatusInternalServerError, "wait "+err.Error())
+		}
 
 		collection := bucket.Collection("users")
 		user := new(User)
@@ -128,7 +128,7 @@ func (api *Api) Start() {
 	e.GET("/payments", func(c echo.Context) error {
 		var respData RespData
 
-		queryStr := fmt.Sprintf("SELECT * FROM `payments` limit 25")
+		queryStr := "SELECT * FROM `payments` limit 25"
 		rows, err := cluster.Query(queryStr, &gocb.QueryOptions{})
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "query "+err.Error())
@@ -152,8 +152,11 @@ func (api *Api) Start() {
 		c.Bind(&payment)
 		id := uuid.New().String()
 		payment.ID = id
-		//dat, _ := json.Marshal(payment)
-		// log.Println("payment_id:", string(dat))
+		bucket := cluster.Bucket(bucketName)
+		err = bucket.WaitUntilReady(5*time.Second, nil)
+		if err != nil {
+			c.String(http.StatusInternalServerError, "wait "+err.Error())
+		}
 
 		collection := bucket.Collection("payments")
 		binaryC := collection.Binary()
