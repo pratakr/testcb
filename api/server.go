@@ -79,7 +79,7 @@ func (api *Api) Start() {
 	bucket := cluster.Bucket(bucketName)
 	err = bucket.WaitUntilReady(5*time.Second, nil)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "wait "+err.Error())
+		log.Fatal(http.StatusInternalServerError, "wait "+err.Error())
 	}
 	log.Println("Connected to Couchbase:"+connectionString, bucketName, username, password)
 
